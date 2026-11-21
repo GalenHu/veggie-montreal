@@ -2,6 +2,8 @@
 
 Find vegetarian and vegan restaurants near any spot in Montréal, then turn the results into a printable tri-fold brochure.
 
+**Live site: https://galenhu.github.io/veggie-montreal/**
+
 ## Features
 
 - **Search by place**: address, neighbourhood, métro station, or your current location
