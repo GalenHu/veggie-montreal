@@ -10,49 +10,51 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="brochure.css" />
+  <script src="i18n.js"></script>
 </head>
 <body>
   <div class="toolbar no-print">
-    <a href="index.html" class="tb-link">← Back to finder</a>
-    <span class="tb-hint">Click the cover title or subtitle to edit it. Print on Letter, landscape, double-sided, flip on short edge, then fold in thirds.</span>
-    <label class="tb-check"><input type="checkbox" id="guides" checked /> Fold guides</label>
-    <button type="button" id="print-btn" class="tb-btn">🖨️ Print</button>
+    <a href="index.html" class="tb-link" id="back-link" data-i18n="b.back">← Back to finder</a>
+    <span class="tb-hint" data-i18n="b.hint">Click the cover title or subtitle to edit it. Print on Letter, landscape, double-sided, flip on short edge, then fold in thirds.</span>
+    <label class="tb-check"><input type="checkbox" id="guides" checked /> <span data-i18n="b.guides">Fold guides</span></label>
+    <button type="button" id="lang-btn" class="tb-btn tb-btn-ghost" data-i18n="lang.switch" data-i18n-aria="lang.switchAria">Français</button>
+    <button type="button" id="print-btn" class="tb-btn" data-i18n="b.print">🖨️ Print</button>
   </div>
 
-  <p class="empty no-print hidden" id="empty">
+  <p class="empty no-print hidden" id="empty" data-i18n-html="b.empty">
     No brochure data yet. Go back to the <a href="index.html">finder</a>, run a search, then press “Make brochure”.
   </p>
 
   <div id="sheets" class="sheets guides">
-    <div class="sheet-label no-print">Side 1 · Outside</div>
+    <div class="sheet-label no-print" data-i18n="b.side1">Side 1 · Outside</div>
     <section class="sheet" aria-label="Outside of brochure">
       <!-- Inner flap -->
       <div class="panel flap">
-        <h2 class="panel-title">Good to know</h2>
+        <h2 class="panel-title" data-i18n="b.goodToKnow">Good to know</h2>
         <div class="legend">
-          <div><span class="dot vegan"></span><b>100% vegan</b> — nothing animal on the menu.</div>
-          <div><span class="dot veg"></span><b>100% vegetarian</b> — no meat or fish; may use dairy or eggs.</div>
-          <div><span class="dot opt"></span><b>Veg options</b> — a regular menu with at least some vegetarian dishes.</div>
+          <div><span class="dot vegan"></span><span data-i18n-html="b.legendVegan"></span></div>
+          <div><span class="dot veg"></span><span data-i18n-html="b.legendVeg"></span></div>
+          <div><span class="dot opt"></span><span data-i18n-html="b.legendOpt"></span></div>
         </div>
-        <h3 class="sub">Our picks</h3>
+        <h3 class="sub" data-i18n="b.picks">Our picks</h3>
         <ol class="picks" id="picks"></ol>
-        <h3 class="sub">Handy phrases</h3>
-        <ul class="phrases">
+        <h3 class="sub" data-i18n="b.phrases">Handy phrases</h3>
+        <ul class="phrases" data-i18n-html="b.phrasesList">
           <li><i>Je suis végane / végétarien·ne.</i> — I'm vegan / vegetarian.</li>
           <li><i>Est-ce qu'il y a du lait ou des œufs?</i> — Is there milk or egg in it?</li>
           <li><i>Sans viande, s'il vous plaît.</i> — No meat, please.</li>
         </ul>
-        <p class="note">Hours and menus change — check before you go.</p>
+        <p class="note" data-i18n="b.note">Hours and menus change — check before you go.</p>
       </div>
 
       <!-- Back panel -->
       <div class="panel back">
-        <h2 class="panel-title">Find your way</h2>
+        <h2 class="panel-title" data-i18n="b.findWay">Find your way</h2>
         <div id="mini-map" class="mini-map"></div>
         <p class="map-cap" id="map-cap"></p>
         <div class="back-foot">
-          <p><b>Veggie Montréal</b><br />Made <span id="made-date"></span></p>
-          <p class="credit">Listings &amp; map data © OpenStreetMap contributors (openstreetmap.org/copyright). Served via MapComplete (mapcomplete.org). Places are community-mapped and may be incomplete.</p>
+          <p><b data-i18n="meta.title">Veggie Montréal</b><br /><span id="made-date"></span></p>
+          <p class="credit" data-i18n="b.credit">Listings &amp; map data © OpenStreetMap contributors (openstreetmap.org/copyright). Served via MapComplete (mapcomplete.org). Places are community-mapped and may be incomplete.</p>
         </div>
       </div>
 
@@ -68,15 +70,15 @@
             <path d="M60 170 h80" stroke="var(--deep)" stroke-width="4" stroke-linecap="round"/>
           </svg>
         </div>
-        <p class="kicker">A pocket guide to</p>
+        <p class="kicker" data-i18n="b.kicker">A pocket guide to</p>
         <h1 class="cover-title" id="cover-title" contenteditable="true" spellcheck="false">Veggie Eats</h1>
         <p class="cover-sub" id="cover-sub" contenteditable="true" spellcheck="false">Montréal</p>
         <p class="cover-meta" id="cover-meta"></p>
-        <div class="cover-band">Végé · Végane · Délicieux</div>
+        <div class="cover-band" data-i18n="b.band">Végé · Végane · Délicieux</div>
       </div>
     </section>
 
-    <div class="sheet-label no-print">Side 2 · Inside</div>
+    <div class="sheet-label no-print" data-i18n="b.side2">Side 2 · Inside</div>
     <section class="sheet" aria-label="Inside of brochure">
       <div class="panel inside" id="inside-1"></div>
       <div class="panel inside" id="inside-2"></div>

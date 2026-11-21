@@ -10,6 +10,7 @@ Find vegetarian and vegan restaurants near any spot in Montréal, then turn the 
 - **Filters**: any veg dish / 100% vegetarian / 100% vegan, radius (0.5–10 km), open now
 - **Map**: clustered pins; each cluster's ring shows the share of fully-veg places
 - **🎲 Surprise me**: picks a random place from your current results
+- **English / Français**: the whole site and brochure, switchable from the header (or `?lang=fr`); French browsers get French by default
 - **🗞️ Make brochure**: builds a Letter-size, double-sided tri-fold guide (cover, map, picks, listings) ready to print
 
 ## Run it locally
@@ -40,5 +41,6 @@ Missing or wrong place? Fix it on OpenStreetMap (for example with MapComplete's 
 | --- | --- |
 | `index.html`, `style.css`, `app.js` | The finder |
 | `tiles.js` | Reads MapComplete's vector tiles |
+| `i18n.js` | English and French text |
 | `brochure.html`, `brochure.css`, `brochure.js` | The printable tri-fold |
 | `data/montreal-backup.json` | Offline fallback list |

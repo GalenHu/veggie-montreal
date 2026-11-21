@@ -12,57 +12,58 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="style.css" />
+  <script src="i18n.js"></script>
 </head>
 <body>
   <div class="app">
     <aside class="panel">
       <header class="brand">
         <span class="logo" aria-hidden="true">🌱</span>
-        <div>
-          <h1>Veggie Montréal</h1>
-          <p class="tagline">Vegetarian &amp; vegan spots near you</p>
+        <div class="brand-text">
+          <h1 data-i18n="meta.title">Veggie Montréal</h1>
+          <p class="tagline" data-i18n="tagline">Vegetarian &amp; vegan spots near you</p>
         </div>
+        <button id="lang-btn" type="button" class="btn lang-btn" data-i18n="lang.switch" data-i18n-aria="lang.switchAria">Français</button>
       </header>
 
       <form id="search-form" class="search" autocomplete="off">
-        <label for="search-input" class="sr-only">Address, neighbourhood or métro</label>
-        <input id="search-input" type="search" placeholder="Plateau, Mile End, Berri-UQAM, an address…" />
-        <button type="submit" class="btn btn-primary">Search</button>
+        <label for="search-input" class="sr-only" data-i18n="search.label">Address, neighbourhood or métro</label>
+        <input id="search-input" type="search" data-i18n-placeholder="search.placeholder" placeholder="Plateau, Mile End, Berri-UQAM, an address…" />
+        <button type="submit" class="btn btn-primary" data-i18n="search.button">Search</button>
       </form>
-      <button id="locate-btn" type="button" class="btn btn-ghost">📍 Use my location</button>
+      <button id="locate-btn" type="button" class="btn btn-ghost" data-i18n="locate">📍 Use my location</button>
 
       <div class="filters">
-        <div class="seg" role="radiogroup" aria-label="Diet">
-          <button type="button" class="seg-btn active" data-diet="all" role="radio" aria-checked="true">Any veg dish</button>
-          <button type="button" class="seg-btn" data-diet="vegetarian" role="radio" aria-checked="false">100% veg</button>
-          <button type="button" class="seg-btn" data-diet="vegan" role="radio" aria-checked="false">100% vegan</button>
+        <div class="seg" role="radiogroup" data-i18n-aria="diet.aria" aria-label="Diet">
+          <button type="button" class="seg-btn active" data-diet="all" role="radio" aria-checked="true" data-i18n="diet.all">Any veg dish</button>
+          <button type="button" class="seg-btn" data-diet="vegetarian" role="radio" aria-checked="false" data-i18n="diet.vegetarian">100% veg</button>
+          <button type="button" class="seg-btn" data-diet="vegan" role="radio" aria-checked="false" data-i18n="diet.vegan">100% vegan</button>
         </div>
         <label class="radius">
-          <span>Radius <strong id="radius-label">2 km</strong></span>
+          <span><span data-i18n="radius">Radius</span> <strong id="radius-label">2 km</strong></span>
           <input id="radius" type="range" min="0.5" max="10" step="0.5" value="2" />
         </label>
-        <label class="check"><input id="open-now" type="checkbox" /> Open now (when hours are known)</label>
+        <label class="check"><input id="open-now" type="checkbox" /> <span data-i18n="openNow">Open now (when hours are known)</span></label>
       </div>
 
       <div class="status-row">
         <div class="status" id="status" aria-live="polite"></div>
         <div class="status-actions">
-          <button id="surprise-btn" type="button" class="btn btn-small" disabled>🎲 Surprise me</button>
-          <button id="brochure-btn" type="button" class="btn btn-small" disabled>🗞️ Make brochure</button>
+          <button id="surprise-btn" type="button" class="btn btn-small" disabled data-i18n="surprise">🎲 Surprise me</button>
+          <button id="brochure-btn" type="button" class="btn btn-small" disabled data-i18n="brochure">🗞️ Make brochure</button>
         </div>
       </div>
       <ul class="results" id="results"></ul>
 
       <footer class="foot">
-        Data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors,
-        served by <a href="https://mapcomplete.org" target="_blank" rel="noopener">MapComplete</a>'s tile cache.
-        Missing a place? <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">Add it to OSM</a>.
+        <span data-i18n-html="foot.data"></span>
+        <span data-i18n-html="foot.missing"></span>
       </footer>
     </aside>
 
     <main class="map-wrap">
       <div id="map"></div>
-      <button id="area-btn" type="button" class="btn btn-float hidden">Search this area</button>
+      <button id="area-btn" type="button" class="btn btn-float hidden" data-i18n="areaBtn">Search this area</button>
     </main>
   </div>
 

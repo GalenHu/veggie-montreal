@@ -1,7 +1,10 @@
 // Veggie Montréal — finds vegetarian/vegan places using OpenStreetMap data.
 // Geocoding: Nominatim. Places: Overpass API. No API keys required.
 
-const MONTREAL = { lat: 45.5152, lon: -73.5800, label: 'Downtown Montréal' };
+const MONTREAL = { lat: 45.5152, lon: -73.5800, label: null, labelKey: 'center.downtown' };
+const { t } = I18N;
+// Where the search circle is centred, in words (user query or a translated label).
+const whereLabel = () => state.center.label || t(state.center.labelKey);
 // Rough bounding box for greater Montréal, used to bias address search.
 const MTL_VIEWBOX = '-74.05,45.75,-73.35,45.35';
 const OVERPASS_ENDPOINTS = [
@@ -24,10 +27,9 @@ const state = {
 
 // ---------- Map ----------
 const map = L.map('map', { zoomControl: true }).setView([MONTREAL.lat, MONTREAL.lon], 14);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-}).addTo(map);
+const tileAttribution = () => `&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ${t('map.contributors')}`;
+let currentAttribution = tileAttribution();
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: currentAttribution }).addTo(map);
 const markerLayer = L.markerClusterGroup({
   maxClusterRadius: 45,
   showCoverageOnHover: false,
@@ -113,14 +115,18 @@ function distanceKm(a, b) {
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
+/** Raw OSM cuisine list → readable, translated text ("Thai, Sushi" / "Thaïlandaise, Sushi"). */
 function prettyCuisine(c) {
   if (!c) return '';
-  return c.split(';').map((s) => s.trim().replace(/_/g, ' '))
+  return c.split(';').map((s) => s.trim())
     .filter((s) => s && !/^(vegan|vegetarian)$/i.test(s))
+    .map((s) => I18N.cuisine(s).replace(/_/g, ' '))
     .map((s) => s[0].toUpperCase() + s.slice(1)).join(', ');
 }
 
-const AMENITY = { restaurant: 'Restaurant', cafe: 'Café', fast_food: 'Fast food', ice_cream: 'Ice cream', food_court: 'Food court', bar: 'Bar', pub: 'Pub', biergarten: 'Beer garden', bakery: 'Bakery', deli: 'Deli', pastry: 'Pastry', confectionery: 'Sweets' };
+const TYPES = ['restaurant', 'cafe', 'fast_food', 'ice_cream', 'food_court', 'bar', 'pub', 'biergarten', 'bakery', 'deli', 'pastry', 'confectionery'];
+const typeLabel = (p) => t(`type.${p.typeKey}`);
+const kindLabel = (k) => t(`kind.${k}`);
 
 function toPlace(el) {
   const t = el.tags || {};
@@ -132,8 +138,8 @@ function toPlace(el) {
     name: t.name,
     lat, lon,
     kind: classify(t, el.fallbackKind),
-    type: AMENITY[t.amenity] || AMENITY[t.shop] || 'Place',
-    cuisine: prettyCuisine(t.cuisine),
+    typeKey: TYPES.includes(t.amenity) ? t.amenity : TYPES.includes(t.shop) ? t.shop : 'place',
+    cuisine: t.cuisine || '', // raw OSM value; translated when shown
     address: street,
     hours: t.opening_hours || '',
     website: t.website || t['contact:website'] || '',
@@ -194,7 +200,6 @@ function isOpenNow(hours) {
 }
 
 // ---------- Rendering ----------
-const KIND_LABEL = { vegan: '100% vegan', veg: '100% vegetarian', opt: 'Veg options' };
 
 function filtered() {
   return state.places.filter((p) => {
@@ -211,9 +216,9 @@ function directionsUrl(p) {
 }
 
 function popupHtml(p) {
-  return `<strong>${esc(p.name)}</strong><br>${esc(KIND_LABEL[p.kind])} · ${esc(p.type)}` +
+  return `<strong>${esc(p.name)}</strong><br>${esc(kindLabel(p.kind))} · ${esc(typeLabel(p))}` +
     (p.address ? `<br>${esc(p.address)}` : '') +
-    `<br><a href="${directionsUrl(p)}" target="_blank" rel="noopener">Directions</a>`;
+    `<br><a href="${directionsUrl(p)}" target="_blank" rel="noopener">${t('directions')}</a>`;
 }
 
 function render() {
@@ -234,19 +239,19 @@ function render() {
     const li = document.createElement('li');
     li.className = 'card';
     li.dataset.id = p.id;
-    const metaBits = [p.type, p.cuisine].filter(Boolean).join(' · ');
+    const metaBits = [typeLabel(p), prettyCuisine(p.cuisine)].filter(Boolean).join(' · ');
     li.innerHTML = `
-      <div class="card-top"><h3>${esc(p.name)}</h3><span class="dist">${p.dist < 1 ? Math.round(p.dist * 1000) + ' m' : p.dist.toFixed(1) + ' km'}</span></div>
+      <div class="card-top"><h3>${esc(p.name)}</h3><span class="dist">${I18N.dist(p.dist)}</span></div>
       <div class="meta">${esc(metaBits)}</div>
       ${p.address ? `<div class="meta">${esc(p.address)}</div>` : ''}
       <div class="tags">
-        <span class="tag ${p.kind}">${KIND_LABEL[p.kind]}</span>
-        ${open === true ? '<span class="tag open">Open now</span>' : open === false ? '<span class="tag closed">Closed now</span>' : ''}
+        <span class="tag ${p.kind}">${kindLabel(p.kind)}</span>
+        ${open === true ? `<span class="tag open">${t('openTag')}</span>` : open === false ? `<span class="tag closed">${t('closedTag')}</span>` : ''}
       </div>
       <div class="links">
-        <a href="${directionsUrl(p)}" target="_blank" rel="noopener">Directions</a>
-        ${p.website ? `<a href="${esc(p.website)}" target="_blank" rel="noopener">Website</a>` : ''}
-        ${p.phone ? `<a href="tel:${esc(p.phone.replace(/\s/g, ''))}">Call</a>` : ''}
+        <a href="${directionsUrl(p)}" target="_blank" rel="noopener">${t('directions')}</a>
+        ${p.website ? `<a href="${esc(p.website)}" target="_blank" rel="noopener">${t('website')}</a>` : ''}
+        ${p.phone ? `<a href="tel:${esc(p.phone.replace(/\s/g, ''))}">${t('call')}</a>` : ''}
         <a href="https://www.openstreetmap.org/${p.id}" target="_blank" rel="noopener">OSM</a>
       </div>`;
     li.addEventListener('click', (e) => { if (e.target.tagName !== 'A') highlight(p.id, true); });
@@ -258,13 +263,16 @@ function render() {
   els.surprise.disabled = !list.length;
   const total = state.places.filter((p) => p.dist <= state.radiusKm).length;
   if (!list.length) {
-    setStatus(total ? 'No places match these filters — try widening them.' : 'No veg-friendly places found here. Try a bigger radius.');
+    setStatus(total ? t('status.noMatch') : t('status.none'));
   } else {
-    setStatus(`${list.length} place${list.length === 1 ? '' : 's'} within ${state.radiusKm} km of ${state.center.label}`);
+    setStatus(t('status.count', {
+      n: list.length, places: t(list.length === 1 ? 'status.place' : 'status.places'),
+      r: I18N.num(state.radiusKm), where: whereLabel(),
+    }));
   }
   if (state.usingBackup) {
-    els.status.textContent += ` · Live search is down, showing our saved list (${state.places.length} places, ${state.backupDate}).`;
-    if (!list.length) els.status.textContent += ' Try a bigger radius.';
+    els.status.textContent += t('status.backup', { n: state.places.length, date: state.backupDate });
+    if (!list.length) els.status.textContent += t('status.biggerRadius');
   }
 }
 
@@ -310,7 +318,7 @@ async function load({ fit = true } = {}) {
   }
 
   // 1) MapComplete's tile cache: fast, and cached in memory after the first load.
-  setStatus('Loading veg-friendly places…');
+  setStatus(t('status.loading'));
   try {
     const elements = await window.MapCompleteTiles.fetchVegElements(state.center, state.radiusKm);
     if (seq !== state.requestSeq) return;
@@ -332,7 +340,7 @@ async function load({ fit = true } = {}) {
     return;
   }
 
-  setStatus('Searching for veg-friendly places…');
+  setStatus(t('status.searching'));
   els.results.innerHTML = '';
   try {
     const data = await overpass(buildQuery(state.center, Math.round(state.radiusKm * 1000)));
@@ -360,7 +368,7 @@ async function showBackup(seq) {
     backupCache ??= await (await fetch('data/montreal-backup.json')).json();
   } catch (e) {
     console.error(e);
-    setStatus('Could not reach the OpenStreetMap servers. Please try again in a moment.', true);
+    setStatus(t('status.offline'), true);
     return;
   }
   if (seq !== state.requestSeq) return;
@@ -392,27 +400,27 @@ els.form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const q = els.input.value.trim();
   if (!q) return;
-  setStatus(`Looking up “${q}”…`);
+  setStatus(t('status.lookingUp', { q }));
   try {
     const hit = await geocode(q);
-    if (!hit) { setStatus(`Couldn't find “${q}”. Try a street address or neighbourhood.`, true); return; }
+    if (!hit) { setStatus(t('status.notFound', { q }), true); return; }
     state.center = { lat: +hit.lat, lon: +hit.lon, label: q };
     load();
   } catch (err) {
     console.error(err);
-    setStatus('Address search is unavailable right now.', true);
+    setStatus(t('status.geocodeDown'), true);
   }
 });
 
 els.locate.addEventListener('click', () => {
-  if (!navigator.geolocation) { setStatus('Your browser does not support location.', true); return; }
-  setStatus('Getting your location…');
+  if (!navigator.geolocation) { setStatus(t('status.noGeo'), true); return; }
+  setStatus(t('status.locating'));
   navigator.geolocation.getCurrentPosition(
     (pos) => {
-      state.center = { lat: pos.coords.latitude, lon: pos.coords.longitude, label: 'you' };
+      state.center = { lat: pos.coords.latitude, lon: pos.coords.longitude, label: null, labelKey: 'center.you' };
       load();
     },
-    () => setStatus('Location permission was denied. Search an address instead.', true),
+    () => setStatus(t('status.geoDenied'), true),
     { enableHighAccuracy: true, timeout: 10000 },
   );
 });
@@ -429,7 +437,7 @@ document.querySelectorAll('.seg-btn').forEach((b) => b.addEventListener('click',
 let radiusTimer;
 els.radius.addEventListener('input', () => {
   state.radiusKm = +els.radius.value;
-  els.radiusLabel.textContent = `${state.radiusKm} km`;
+  els.radiusLabel.textContent = `${I18N.num(state.radiusKm)} km`;
   drawCenter();
   clearTimeout(radiusTimer);
   radiusTimer = setTimeout(() => load(), 450);
@@ -444,7 +452,7 @@ map.on('moveend', () => {
 });
 els.areaBtn.addEventListener('click', () => {
   const c = map.getCenter();
-  state.center = { lat: c.lat, lon: c.lng, label: 'map centre' };
+  state.center = { lat: c.lat, lon: c.lng, label: null, labelKey: 'center.map' };
   load({ fit: false });
 });
 
@@ -461,7 +469,7 @@ els.surprise.addEventListener('click', () => {
   const finish = () => {
     shuffling = false;
     els.surprise.disabled = false;
-    setStatus(`🎲 How about ${pick.name}? (${KIND_LABEL[pick.kind].toLowerCase()}, ${pick.dist < 1 ? Math.round(pick.dist * 1000) + ' m' : pick.dist.toFixed(1) + ' km'} away)`);
+    setStatus(t('status.surprise', { name: pick.name, kind: kindLabel(pick.kind).toLowerCase(), dist: I18N.dist(pick.dist) }));
     highlight(pick.id, true);
     const card = document.querySelector(`.card[data-id="${CSS.escape(pick.id)}"]`);
     document.querySelectorAll('.card.picked').forEach((c) => c.classList.remove('picked'));
@@ -483,7 +491,8 @@ els.surprise.addEventListener('click', () => {
 // Hand the current results to the brochure page (opened in a new tab).
 els.brochure.addEventListener('click', () => {
   const payload = {
-    area: state.center.label,
+    area: whereLabel(),
+    areaIsDefault: !state.center.label, // generic label: brochure uses "Montréal" instead
     center: { lat: state.center.lat, lon: state.center.lon },
     radiusKm: state.radiusKm,
     diet: state.diet,
@@ -493,10 +502,27 @@ els.brochure.addEventListener('click', () => {
   try {
     localStorage.setItem('veggie-brochure', JSON.stringify(payload));
   } catch {
-    setStatus('Your browser blocked storage, so the brochure can’t be built.', true);
+    setStatus(t('status.storageBlocked'), true);
     return;
   }
-  window.open('brochure.html', '_blank');
+  window.open(`brochure.html?lang=${I18N.lang}`, '_blank');
 });
+
+// ---------- Language ----------
+function applyLanguage() {
+  I18N.apply();
+  document.title = t('meta.title');
+  $('lang-btn').textContent = t('lang.switch');
+  els.radiusLabel.textContent = `${I18N.num(state.radiusKm)} km`;
+  map.attributionControl.removeAttribution(currentAttribution);
+  currentAttribution = tileAttribution();
+  map.attributionControl.addAttribution(currentAttribution);
+  if (state.places.length) render();
+}
+$('lang-btn').addEventListener('click', () => {
+  I18N.setLang(I18N.lang === 'fr' ? 'en' : 'fr');
+  applyLanguage();
+});
+applyLanguage();
 
 load();
