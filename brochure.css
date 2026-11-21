@@ -1,0 +1,121 @@
+/* Tri-fold brochure: US Letter landscape, 3 panels per side.
+   Colours are fixed (not dark-mode aware) because this is a print piece. */
+:root {
+  --paper: #fffaf0;
+  --cream: #f3ead3;
+  --ink: #1f2a1f;
+  --muted: #5f675c;
+  --deep: #1e4d2f;
+  --leaf: #4d9a5f;
+  --leaf-2: #8cc084;
+  --tomato: #d9583b;
+  --vegan: #2f7d4a;
+  --veg: #b7791f;
+  --opt: #5b6b8c;
+  --panel-w: 3.6667in;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: #d9d4c6; color: var(--ink); font: 8.5pt/1.38 Inter, system-ui, sans-serif; }
+.hidden { display: none !important; }
+a { color: inherit; }
+
+/* ---------- Screen chrome ---------- */
+.toolbar {
+  position: sticky; top: 0; z-index: 1000;
+  display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center;
+  padding: 10px 16px; background: #1e2a1f; color: #e8ece6; font-size: 13px;
+}
+.tb-link { color: #b8e0c2; text-decoration: none; }
+.tb-hint { flex: 1; min-width: 220px; color: #b5bdb1; }
+.tb-check { display: flex; gap: 6px; align-items: center; }
+.tb-btn { font: 600 13px Inter, sans-serif; padding: 8px 14px; border-radius: 8px; border: 0; background: #5cb87a; color: #0d1a10; cursor: pointer; }
+.empty { text-align: center; padding: 60px 16px; font-size: 15px; }
+
+.sheets { display: flex; flex-direction: column; align-items: safe center; gap: 8px; padding: 20px 16px 40px; overflow-x: auto; }
+.sheet-label { align-self: center; width: 11in; max-width: 100%; font: 600 12px Inter, sans-serif; color: #4a4f46; margin-top: 12px; text-transform: uppercase; letter-spacing: .08em; }
+
+/* ---------- Sheet ---------- */
+.sheet {
+  width: 11in; height: 8.5in; flex: none;
+  display: grid; grid-template-columns: repeat(3, var(--panel-w));
+  background: var(--paper);
+  box-shadow: 0 2px 12px rgba(0,0,0,.18);
+  position: relative;
+}
+.guides .sheet::before, .guides .sheet::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 0;
+  border-left: 1px dashed rgba(0,0,0,.18); pointer-events: none;
+}
+.guides .sheet::before { left: var(--panel-w); }
+.guides .sheet::after { left: calc(var(--panel-w) * 2); }
+
+.panel { padding: 0.38in 0.34in; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+.panel-title { font: 700 17pt/1.1 Fraunces, Georgia, serif; color: var(--deep); margin: 0 0 10px; }
+.sub { font: 600 10.5pt Fraunces, Georgia, serif; color: var(--deep); margin: 14px 0 6px; }
+
+/* ---------- Cover ---------- */
+.cover { background: var(--deep); color: #f6f1e3; text-align: center; justify-content: center; align-items: center; padding-bottom: 0.9in; }
+.cover-art { width: 1.9in; margin-bottom: 18px; }
+.kicker { margin: 0; text-transform: uppercase; letter-spacing: .2em; font-size: 7.5pt; color: #b8e0c2; }
+.cover-title { font: 700 30pt/1 Fraunces, Georgia, serif; margin: 8px 0 4px; outline: none; }
+.cover-sub { font: italic 500 18pt/1.1 Fraunces, Georgia, serif; margin: 0; color: var(--leaf-2); outline: none; }
+.cover-title:focus, .cover-sub:focus { background: rgba(255,255,255,.08); border-radius: 4px; }
+.cover-meta { margin: 14px 0 0; font-size: 8pt; color: #cfd8cc; max-width: 2.6in; }
+.cover-band {
+  position: absolute; left: 0; right: 0; bottom: 0.38in;
+  background: var(--tomato); color: #fff; padding: 7px 0;
+  font: 600 8pt Inter, sans-serif; letter-spacing: .16em; text-transform: uppercase;
+}
+
+/* ---------- Flap ---------- */
+.legend { display: flex; flex-direction: column; gap: 6px; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+.dot.vegan, .num.vegan { background: var(--vegan); }
+.dot.veg, .num.veg { background: var(--veg); }
+.dot.opt, .num.opt { background: var(--opt); }
+.picks { margin: 0; padding-left: 16px; }
+.picks li { margin-bottom: 3px; }
+.picks small { color: var(--muted); }
+.phrases { margin: 0; padding-left: 14px; }
+.phrases li { margin-bottom: 4px; }
+.note { margin-top: auto; font-size: 7.5pt; color: var(--muted); font-style: italic; }
+
+/* ---------- Back ---------- */
+.mini-map { height: 3.3in; border-radius: 6px; border: 1px solid #cfc7b0; background: var(--cream); }
+.map-cap { font-size: 7.5pt; color: var(--muted); margin: 6px 0 0; }
+.back-foot { margin-top: auto; text-align: center; }
+.back-foot p { margin: 0 0 6px; }
+.credit { font-size: 6.5pt; color: var(--muted); }
+.mk {
+  width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #fff;
+  color: #fff; font: 700 9px/15px Inter, sans-serif; text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,.4);
+}
+.mk.vegan { background: var(--vegan); } .mk.veg { background: var(--veg); } .mk.opt { background: var(--opt); }
+.mk-center { width: 10px; height: 10px; border-radius: 50%; background: var(--tomato); border: 2px solid #fff; }
+
+/* ---------- Inside listings ---------- */
+.inside .panel-title { font-size: 14pt; }
+.inside:first-child .panel-title::after { content: ''; display: block; width: 36px; height: 3px; background: var(--tomato); margin-top: 6px; }
+.entry { display: grid; grid-template-columns: 20px 1fr; gap: 0 8px; padding: 7px 0; border-bottom: 1px dotted #cfc7b0; break-inside: avoid; }
+.entry:last-child { border-bottom: 0; }
+.num { width: 18px; height: 18px; border-radius: 50%; color: #fff; font: 700 9px/18px Inter, sans-serif; text-align: center; margin-top: 1px; }
+.entry h3 { margin: 0; font: 600 10.5pt/1.2 Fraunces, Georgia, serif; }
+.e-kind { font-size: 7pt; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.e-kind.vegan { color: var(--vegan); } .e-kind.veg { color: var(--veg); } .e-kind.opt { color: var(--opt); }
+.e-line { color: var(--muted); margin: 0; }
+.e-line b { color: var(--ink); font-weight: 500; }
+.more { margin-top: auto; font-size: 7.5pt; color: var(--muted); font-style: italic; }
+
+/* ---------- Print ---------- */
+@page { size: letter landscape; margin: 0; }
+@media print {
+  body { background: none; }
+  .no-print { display: none !important; }
+  .sheets { padding: 0; gap: 0; display: block; overflow: visible; }
+  .sheet { box-shadow: none; page-break-after: always; break-after: page; }
+  .sheet:last-of-type { page-break-after: auto; break-after: auto; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

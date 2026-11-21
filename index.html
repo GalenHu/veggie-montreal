@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Veggie Montréal</title>
+  <meta name="description" content="Find vegetarian and vegan restaurants near you in Montréal." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="panel">
+      <header class="brand">
+        <span class="logo" aria-hidden="true">🌱</span>
+        <div>
+          <h1>Veggie Montréal</h1>
+          <p class="tagline">Vegetarian &amp; vegan spots near you</p>
+        </div>
+      </header>
+
+      <form id="search-form" class="search" autocomplete="off">
+        <label for="search-input" class="sr-only">Address, neighbourhood or métro</label>
+        <input id="search-input" type="search" placeholder="Plateau, Mile End, Berri-UQAM, an address…" />
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+      <button id="locate-btn" type="button" class="btn btn-ghost">📍 Use my location</button>
+
+      <div class="filters">
+        <div class="seg" role="radiogroup" aria-label="Diet">
+          <button type="button" class="seg-btn active" data-diet="all" role="radio" aria-checked="true">Any veg dish</button>
+          <button type="button" class="seg-btn" data-diet="vegetarian" role="radio" aria-checked="false">100% veg</button>
+          <button type="button" class="seg-btn" data-diet="vegan" role="radio" aria-checked="false">100% vegan</button>
+        </div>
+        <label class="radius">
+          <span>Radius <strong id="radius-label">2 km</strong></span>
+          <input id="radius" type="range" min="0.5" max="10" step="0.5" value="2" />
+        </label>
+        <label class="check"><input id="open-now" type="checkbox" /> Open now (when hours are known)</label>
+      </div>
+
+      <div class="status-row">
+        <div class="status" id="status" aria-live="polite"></div>
+        <div class="status-actions">
+          <button id="surprise-btn" type="button" class="btn btn-small" disabled>🎲 Surprise me</button>
+          <button id="brochure-btn" type="button" class="btn btn-small" disabled>🗞️ Make brochure</button>
+        </div>
+      </div>
+      <ul class="results" id="results"></ul>
+
+      <footer class="foot">
+        Data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors,
+        served by <a href="https://mapcomplete.org" target="_blank" rel="noopener">MapComplete</a>'s tile cache.
+        Missing a place? <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">Add it to OSM</a>.
+      </footer>
+    </aside>
+
+    <main class="map-wrap">
+      <div id="map"></div>
+      <button id="area-btn" type="button" class="btn btn-float hidden">Search this area</button>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="tiles.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

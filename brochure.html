@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Veggie Brochure</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗞️</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="brochure.css" />
+</head>
+<body>
+  <div class="toolbar no-print">
+    <a href="index.html" class="tb-link">← Back to finder</a>
+    <span class="tb-hint">Click the cover title or subtitle to edit it. Print on Letter, landscape, double-sided, flip on short edge, then fold in thirds.</span>
+    <label class="tb-check"><input type="checkbox" id="guides" checked /> Fold guides</label>
+    <button type="button" id="print-btn" class="tb-btn">🖨️ Print</button>
+  </div>
+
+  <p class="empty no-print hidden" id="empty">
+    No brochure data yet. Go back to the <a href="index.html">finder</a>, run a search, then press “Make brochure”.
+  </p>
+
+  <div id="sheets" class="sheets guides">
+    <div class="sheet-label no-print">Side 1 · Outside</div>
+    <section class="sheet" aria-label="Outside of brochure">
+      <!-- Inner flap -->
+      <div class="panel flap">
+        <h2 class="panel-title">Good to know</h2>
+        <div class="legend">
+          <div><span class="dot vegan"></span><b>100% vegan</b> — nothing animal on the menu.</div>
+          <div><span class="dot veg"></span><b>100% vegetarian</b> — no meat or fish; may use dairy or eggs.</div>
+          <div><span class="dot opt"></span><b>Veg options</b> — a regular menu with at least some vegetarian dishes.</div>
+        </div>
+        <h3 class="sub">Our picks</h3>
+        <ol class="picks" id="picks"></ol>
+        <h3 class="sub">Handy phrases</h3>
+        <ul class="phrases">
+          <li><i>Je suis végane / végétarien·ne.</i> — I'm vegan / vegetarian.</li>
+          <li><i>Est-ce qu'il y a du lait ou des œufs?</i> — Is there milk or egg in it?</li>
+          <li><i>Sans viande, s'il vous plaît.</i> — No meat, please.</li>
+        </ul>
+        <p class="note">Hours and menus change — check before you go.</p>
+      </div>
+
+      <!-- Back panel -->
+      <div class="panel back">
+        <h2 class="panel-title">Find your way</h2>
+        <div id="mini-map" class="mini-map"></div>
+        <p class="map-cap" id="map-cap"></p>
+        <div class="back-foot">
+          <p><b>Veggie Montréal</b><br />Made <span id="made-date"></span></p>
+          <p class="credit">Listings &amp; map data © OpenStreetMap contributors (openstreetmap.org/copyright). Served via MapComplete (mapcomplete.org). Places are community-mapped and may be incomplete.</p>
+        </div>
+      </div>
+
+      <!-- Front cover -->
+      <div class="panel cover">
+        <div class="cover-art" aria-hidden="true">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="92" fill="var(--cream)" />
+            <path d="M100 168 C 100 120, 100 90, 100 54" stroke="var(--deep)" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M100 96 C 72 92, 52 72, 48 44 C 76 46, 96 64, 100 96 Z" fill="var(--leaf)"/>
+            <path d="M100 118 C 128 114, 150 94, 156 64 C 126 66, 104 86, 100 118 Z" fill="var(--leaf-2)"/>
+            <path d="M100 60 C 90 46, 92 30, 100 20 C 108 30, 110 46, 100 60 Z" fill="var(--leaf)"/>
+            <path d="M60 170 h80" stroke="var(--deep)" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="kicker">A pocket guide to</p>
+        <h1 class="cover-title" id="cover-title" contenteditable="true" spellcheck="false">Veggie Eats</h1>
+        <p class="cover-sub" id="cover-sub" contenteditable="true" spellcheck="false">Montréal</p>
+        <p class="cover-meta" id="cover-meta"></p>
+        <div class="cover-band">Végé · Végane · Délicieux</div>
+      </div>
+    </section>
+
+    <div class="sheet-label no-print">Side 2 · Inside</div>
+    <section class="sheet" aria-label="Inside of brochure">
+      <div class="panel inside" id="inside-1"></div>
+      <div class="panel inside" id="inside-2"></div>
+      <div class="panel inside" id="inside-3"></div>
+    </section>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="brochure.js"></script>
+</body>
+</html>
